@@ -4,11 +4,11 @@ import SignIn from "./sign-in";
 import Link from "next/link";
 
 import styles from "./navbar.module.css";
-// import Upload from "./upload";
 import { useEffect, useState } from "react";
 import { User } from "firebase/auth";
 import { onAuthStateChangedHelper } from "../lib/firebase/firebase";
 import Image from "next/image";
+import Upload from "./upload";
 
 function NavBar() {
   // Initialize user state
@@ -38,6 +38,7 @@ function NavBar() {
           />
         </span>
       </Link>
+      {user && <Upload />}
       <SignIn user={user} />
     </nav>
   );
