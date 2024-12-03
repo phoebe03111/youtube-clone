@@ -12,6 +12,16 @@ const firestore = new Firestore();
 const storage = new Storage();
 
 const rawVideoBucketName = "pc-raw-videos";
+const videoCollectionId = "videos";
+
+export interface Video {
+  id?: string;
+  uid?: string;
+  filename?: string;
+  status?: "processing" | "processed";
+  title?: string;
+  description?: string;
+}
 
 // v1 function
 exports.createUser = functions.auth.user().onCreate((user: any) => {
@@ -56,3 +66,13 @@ export const generateUploadUrl = onCall(
     return { url, fileName };
   }
 );
+
+// v2 function
+export const getVideos = onCall({ maxInstances: 1 }, async () => {
+  const snapshot = await firestore
+    .collection(videoCollectionId)
+    .limit(10)
+    .get();
+
+  return snapshot.docs.map((doc) => doc.data());
+});

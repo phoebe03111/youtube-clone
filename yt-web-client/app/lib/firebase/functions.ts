@@ -1,17 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getFunctions, httpsCallable } from "firebase/functions";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "./firebase";
 
-const functions = getFunctions();
+export interface Video {
+  id?: string;
+  uid?: string;
+  filename?: string;
+  status?: "processing" | "processed";
+  title?: string;
+  description?: string;
+}
 
-const generateUploadUrl = httpsCallable(functions, "generateUploadUrl");
+const generateUploadUrlFunction = httpsCallable(functions, "generateUploadUrl");
+const getVideosFunction = httpsCallable(functions, "getVideos");
 
 export async function uploadVideo(file: File) {
-  const response: any = await generateUploadUrl({
+  const response: any = await generateUploadUrlFunction({
     fileExtension: file.name.split(".").pop(),
   });
 
-  // upload the file via the signed url
-  await fetch(response?.data?.url, {
+  // Upload the file to the signed URL
+  const uploadResult = await fetch(response?.data?.url, {
     method: "PUT",
     body: file,
     headers: {
@@ -19,5 +28,10 @@ export async function uploadVideo(file: File) {
     },
   });
 
-  return;
+  return uploadResult;
+}
+
+export async function getVideos() {
+  const response = await getVideosFunction();
+  return response.data as Video[];
 }

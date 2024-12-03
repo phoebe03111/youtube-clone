@@ -32,14 +32,14 @@ app.post("/process-video", async (req: any, res: any) => {
     return res.status(400).send("Bad Request: missing filename.");
   }
 
-  const inputFileName = data.name; // Format of <UID>-<DATE>.<EXTENSION>
-  const outputFileName = `processed-${data.name}`;
+  const inputFileName = data.name; // In format of <UID>-<DATE>.<EXTENSION>
+  const outputFileName = `processed-${inputFileName}`;
   const videoId = inputFileName.split(".")[0];
 
   if (!isVideoNew(videoId)) {
     return res
       .status(400)
-      .send("Bad Request: video is already processing or processed.");
+      .send("Bad Request: video already processing or processed.");
   } else {
     await setVideo(videoId, {
       id: videoId,
